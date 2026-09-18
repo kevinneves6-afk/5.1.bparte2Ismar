@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hortifruti - Lista de Produtos com Objetos</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f6f4;
+        }
+
+        /* Container principal */
+        .container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 25px;
+            background-color: #ffffff;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            max-width: 850px;
+            width: 90%;
+        }
+
+        /* Título */
+        .titulo {
+            position: absolute;
+            top: 30px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .titulo h1 {
+            color: #2d7a4f;
+            margin-bottom: 5px;
+        }
+
+        .titulo p {
+            color: #666;
+        }
+
+        /* Lado esquerdo */
+        .painel-esquerdo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .painel-esquerdo label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .painel-esquerdo select {
+            width: 180px;
+            height: 200px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background-color: #fff;
+        }
+
+        .painel-esquerdo select:focus {
+            outline: none;
+            border-color: #2d7a4f;
+        }
+
+        /* Meio - botões */
+        .painel-meio {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .painel-meio button {
+            padding: 12px 22px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 160px;
+        }
+
+        #btnDetalhes {
+            background-color: #2d7a4f;
+        }
+
+        #btnDetalhes:hover {
+            background-color: #1f5938;
+            transform: scale(1.05);
+        }
+
+        #btnAbrirModal {
+            background-color: #28a745;
+        }
+
+        #btnAbrirModal:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        /* Lado direito */
+        .painel-direito {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 300px;
+        }
+
+        /* Cards */
+        .card-informacao {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            background-color: #fafafa;
+        }
+
+        .card-informacao strong {
+            display: block;
+            color: #2d7a4f;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .card-informacao div {
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* Imagem */
+        .card-imagem img {
+            max-width: 120px;
+            max-height: 90px;
+            display: block;
+            margin: 5px auto;
+            object-fit: contain;
+        }
+
+        /* Modal (Formulário) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            width: 320px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #2d7a4f;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 4px;
+            color: #666;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .modal-acoes {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-acoes button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-salvar {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-cancelar {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* Responsividade */
+        @media (max-width: 750px) {
+            body {
+                padding: 20px;
+            }
+
+            .container {
+                flex-direction: column;
+                margin-top: 80px;
+            }
+
+            .painel-direito {
+                width: 100%;
+            }
+
+            .painel-meio button {
+                width: 180px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Título -->
+    <div class="titulo">
+        <h1>Hortifruti</h1>
+        <p>Consulte e cadastre informações dos produtos disponíveis</p>
+    </div>
+
+    <!-- Container principal -->
+    <div class="container">
+
+        <!-- ESQUERDA: Lista de produtos -->
+        <div class="painel-esquerdo">
+            <label for="selectProdutos">Produtos</label>
+            <select id="selectProdutos" size="6"></select>
+        </div>
+
+        <!-- MEIO: Botões -->
+        <div class="painel-meio">
+            <button id="btnDetalhes">Detalhes</button>
+            <button id="btnAbrirModal">Novo Produto</button>
+        </div>
+
+        <!-- DIREITA: Informações -->
+        <div class="painel-direito">
+
+            <div class="card-informacao">
+                <strong>Produto</strong>
+                <div id="divProduto">-</div>
+            </div>
+
+            <div class="card-informacao">
+                <strong>Categoria</strong>
+                <div id="divCategoria">-</div>
+            </div>
+
+            <div class="card-informacao">
+                <strong>Preço</strong>
+                <div id="divPreco">-</div>
+            </div>
+
+            <div class="card-informacao">
+                <strong>Estoque</strong>
+                <div id="divEstoque">-</div>
+            </div>
+
+            <div class="card-informacao card-imagem">
+                <strong>Imagem</strong>
+                <div id="divImagem">-</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Modal de Formulário para Inserção de Dados -->
+    <div class="modal-overlay" id="modalForm">
+        <div class="modal-content">
+            <h3>Cadastrar Novo Produto</h3>
+            <div class="form-group">
+                <label for="inputNome">Nome do Produto:</label>
+                <input type="text" id="inputNome" placeholder="Ex: Uva">
+            </div>
+            <div class="form-group">
+                <label for="inputCategoria">Categoria:</label>
+                <input type="text" id="inputCategoria" placeholder="Ex: Frutas">
+            </div>
+            <div class="form-group">
+                <label for="inputPreco">Preço:</label>
+                <input type="text" id="inputPreco" placeholder="Ex: R$ 9,99">
+            </div>
+            <div class="form-group">
+                <label for="inputEstoque">Estoque:</label>
+                <input type="text" id="inputEstoque" placeholder="Ex: 20 caixas">
+            </div>
+            <div class="form-group">
+                <label for="inputImagem">URL da Imagem:</label>
+                <input type="text" id="inputImagem" placeholder="URL da imagem">
+            </div>
+            <div class="modal-acoes">
+                <button type="button" class="btn-cancelar" id="btnCancelar">Cancelar</button>
+                <button type="button" class="btn-salvar" id="btnSalvar">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // =========================================================
+        // ARMAZENAMENTO EM MEMÓRIA COM OBJETOS (Substitui os 5 arrays)
+        // =========================================================
+        const produtos = [
+            {
+                nome: "Banana",
+                categoria: "Frutas",
+                preco: "R$ 5,99",
+                estoque: "30 unidades",
+                imagem: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=300"
+            },
+            {
+                nome: "Maçã",
+                categoria: "Frutas",
+                preco: "R$ 8,99",
+                estoque: "25 unidades",
+                imagem: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=300"
+            },
+            {
+                nome: "Laranja",
+                categoria: "Frutas",
+                preco: "R$ 6,49",
+                estoque: "40 unidades",
+                imagem: "https://images.unsplash.com/photo-1582979512210-99b6a53386f9?w=300"
+            },
+            {
+                nome: "Morango",
+                categoria: "Frutas",
+                preco: "R$ 12,99",
+                estoque: "18 bandejas",
+                imagem: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=300"
+            },
+            {
+                nome: "Abacate",
+                categoria: "Frutas",
+                preco: "R$ 7,99",
+                estoque: "20 unidades",
+                imagem: "https://images.unsplash.com/photo-1519162808019-7de1683fa2ad?w=300"
+            },
+            {
+                nome: "Tomate",
+                categoria: "Legumes",
+                preco: "R$ 6,99",
+                estoque: "35 unidades",
+                imagem: "https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=300"
+            }
+        ];
+
+        // Mapeamento dos elementos da DOM
+        const selectProdutos = document.getElementById("selectProdutos");
+        const btnDetalhes   = document.getElementById("btnDetalhes");
+        const btnAbrirModal = document.getElementById("btnAbrirModal");
+        const btnCancelar   = document.getElementById("btnCancelar");
+        const btnSalvar     = document.getElementById("btnSalvar");
+        const modalForm     = document.getElementById("modalForm");
+
+        const divProduto   = document.getElementById("divProduto");
+        const divCategoria = document.getElementById("divCategoria");
+        const divPreco     = document.getElementById("divPreco");
+        const divEstoque   = document.getElementById("divEstoque");
+        const divImagem    = document.getElementById("divImagem");
+
+        // Função para popular/recarregar a lista de produtos (Select)
+        function carregarSelect() {
+            selectProdutos.innerHTML = "";
+            produtos.forEach((produto, index) => {
+                const opcao = document.createElement("option");
+                opcao.value = index;
+                opcao.textContent = produto.nome;
+                selectProdutos.appendChild(opcao);
+            });
+        }
+
+        // Função para renderizar os detalhes na tela
+        function exibirDetalhes(index) {
+            const prod = produtos[index];
+            if (prod) {
+                divProduto.textContent = prod.nome;
+                divCategoria.textContent = prod.categoria;
+                divPreco.textContent = prod.preco;
+                divEstoque.textContent = prod.estoque;
+                divImagem.innerHTML = `<img src="${prod.imagem}" alt="${prod.nome}">`;
+            }
+        }
+
+        // Evento do botão Detalhes
+        btnDetalhes.addEventListener("click", function () {
+            const index = selectProdutos.value;
+            if (index !== "") {
+                exibirDetalhes(index);
+            }
+        });
+
+        // Eventos do Modal
+        btnAbrirModal.addEventListener("click", function () {
+            modalForm.style.display = "flex";
+        });
+
+        btnCancelar.addEventListener("click", function () {
+            modalForm.style.display = "none";
+            limparFormulario();
+        });
+
+        // Evento para Cadastrar Novo Produto
+        btnSalvar.addEventListener("click", function () {
+            const nome = document.getElementById("inputNome").value.trim();
+            const categoria = document.getElementById("inputCategoria").value.trim();
+            const preco = document.getElementById("inputPreco").value.trim();
+            const estoque = document.getElementById("inputEstoque").value.trim();
+            const imagem = document.getElementById("inputImagem").value.trim();
+
+            if (!nome || !categoria || !preco || !estoque || !imagem) {
+                alert("Por favor, preencha todos os campos!");
+                return;
+            }
+
+            // Cria um novo objeto e adiciona no array em memória via .push()
+            const novoProduto = { nome, categoria, preco, estoque, imagem };
+            produtos.push(novoProduto);
+
+            // Atualiza o select com a nova lista
+            carregarSelect();
+
+            // Seleciona o novo item e exibe seus detalhes na tela
+            const novoIndex = produtos.length - 1;
+            selectProdutos.value = novoIndex;
+            exibirDetalhes(novoIndex);
+
+            // Fecha o modal e limpa os campos
+            modalForm.style.display = "none";
+            limparFormulario();
+        });
+
+        function limparFormulario() {
+            document.getElementById("inputNome").value = "";
+            document.getElementById("inputCategoria").value = "";
+            document.getElementById("inputPreco").value = "";
+            document.getElementById("inputEstoque").value = "";
+            document.getElementById("inputImagem").value = "";
+        }
+
+        // Inicialização
+        carregarSelect();
+        selectProdutos.value = 0;
+        exibirDetalhes(0);
+    </script>
+
+</body>
+
+</html>
